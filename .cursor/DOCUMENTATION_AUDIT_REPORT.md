@@ -1,168 +1,184 @@
-# Documentation Authority Audit Report
+# Documentation Spine Audit Report
 
 **Date:** 2024-12-24  
-**Scope:** TheraPrac workspace (api, web, infra)  
-**Auditor:** AI Documentation Audit
+**Scope:** theraprac-api, theraprac-web, theraprac-infra
 
 ---
 
-## Executive Summary
+## Summary
 
-Completed documentation authority audit across the TheraPrac workspace. Primary finding: **significant documentation duplication in the API project** where backend standards are repeated across 4+ documents. Created explicit authority indexes (`docs/_index.md`) for each project and streamlined `.cursorrules` files to focus on authority rather than restating standards.
+This audit established a clear documentation spine across the TheraPrac workspace:
 
----
-
-## Changes Made
-
-### 1. Created Authority Index Files
-
-| File | Purpose |
-|------|---------|
-| `theraprac-api/docs/_index.md` | Establishes canonical, design, informational, and historical document categories |
-| `theraprac-web/docs/_index.md` | Establishes document authority hierarchy for frontend |
-| `theraprac-infra/docs/_index.md` | Establishes document authority for infrastructure |
-
-### 2. Updated .cursorrules Files
-
-| File | Changes |
-|------|---------|
-| `theraprac-api/.cursorrules` | Removed restated handler patterns; now points to canonical docs |
-| `theraprac-web/.cursorrules` | Streamlined to focus on authority and prohibitions |
+```
+WORKSPACE.md
+    ↓
+Project docs/_index.md (per project)
+    ↓
+Authoritative documents (per topic)
+```
 
 ---
 
-## Document Authority Summary
+## Authoritative Documents Per Project
 
 ### theraprac-api
 
-| Authority | Documents |
-|-----------|-----------|
-| **CANONICAL** | `api/openapi/api.yaml`, `docs/BACKEND_STANDARDS.md`, `docs/BUILD_*.md` |
-| **DESIGN** | `docs/compliance/*`, `docs/recurring-appointments/*`, `docs/intake/*` |
-| **INFORMATIONAL** | `docs/BACKEND_QUICK_REFERENCE.md`, most `docs/guides/*` |
-| **DEPRECATED** | `docs/BACKEND_ARCHITECTURE_GUIDE.md`, `docs/guides/backend-standards.md` |
-| **HISTORICAL** | `docs/archived/*`, `docs/phase*.md` files |
+| Topic | Authoritative Document |
+|-------|------------------------|
+| API contract | `api/openapi/api.yaml` |
+| Coding patterns | `docs/BACKEND_STANDARDS.md` |
+| Build/deploy | `docs/BUILD_AND_DEPLOY.md` |
+| Versioning | `docs/BUILD_STANDARDS.md` |
+| Validation | `docs/guides/api-validation-guide.md` |
+| Error handling | `docs/guides/error-handling-guide.md` |
+| Intake design | `docs/intake/*` (10 documents, design complete) |
 
 ### theraprac-web
 
-| Authority | Documents |
-|-----------|-----------|
-| **CANONICAL** | `docs/FRONTEND_ARCHITECTURE_GUIDE.md`, `docs/reference/*`, `docs/BUILD_*.md` |
-| **DESIGN** | `docs/architecture/*`, `docs/features/*`, `docs/intake/*` |
-| **INFORMATIONAL** | `docs/guides/*`, `docs/getting-started/*` |
-| **HISTORICAL** | `docs/archive/*`, `docs/migration/*` |
+| Topic | Authoritative Document |
+|-------|------------------------|
+| Architecture | `docs/FRONTEND_ARCHITECTURE_GUIDE.md` |
+| Build/deploy | `docs/BUILD_AND_DEPLOY.md` |
+| Versioning | `docs/BUILD_STANDARDS.md` |
+| Pre-commit | `docs/PRE_COMMIT_HOOKS.md` |
+| Security | `docs/SECURITY.md` |
+| Testing strategy | `docs/TEST_COVERAGE_STRATEGY.md` |
+| Design system | `docs/reference/design-system.md` |
+| RBAC | `docs/reference/rbac/api-reference.md` |
+| Auth architecture | `docs/reference/auth-architecture.md` |
+| Components | `docs/reference/components/*` |
+| Data model | `docs/reference/data-model/*` |
 
 ### theraprac-infra
 
-| Authority | Documents |
-|-----------|-----------|
-| **CANONICAL** | `README.md`, `docs/DEPLOYMENT_WORKFLOW.md`, `docs/ZITI_*.md` |
-| **INFORMATIONAL** | Other docs in `docs/` |
+| Topic | Authoritative Document |
+|-------|------------------------|
+| Project overview | `README.md` |
+| Deployment | `docs/DEPLOYMENT_WORKFLOW.md` |
+| Ziti operations | `docs/ZITI_RESOURCE_MANAGEMENT.md` |
+| Ziti access control | `docs/ZITI_ROLES_AND_POLICIES.md` |
 
 ---
 
-## Items Requiring Follow-Up (Not Implemented)
+## Documents Demoted to Historical/Deprecated
 
-### 1. Duplicate Documents to Delete or Merge
+### theraprac-api
 
-**Action Required:** These documents contain nearly identical content and should be consolidated:
+| Document | Reason | Superseded By |
+|----------|--------|---------------|
+| `docs/BACKEND_ARCHITECTURE_GUIDE.md` | Duplicate content | `BACKEND_STANDARDS.md` |
+| `docs/guides/backend-standards.md` | Duplicate content | `BACKEND_STANDARDS.md` |
+| `docs/architecture/backend-guardrails.md` | Overlapping content | `BACKEND_STANDARDS.md` + `.cursorrules` |
+| `docs/phase*.md` (12 files) | Completed phase work | HISTORICAL |
 
-| Document | Recommendation |
-|----------|---------------|
-| `theraprac-api/docs/BACKEND_ARCHITECTURE_GUIDE.md` | Delete (duplicate of `BACKEND_STANDARDS.md`) |
-| `theraprac-api/docs/guides/backend-standards.md` | Delete (duplicate of `BACKEND_STANDARDS.md`) |
+### theraprac-web
 
-### 2. Historical Documents to Archive
-
-**Action Required:** Move these to `docs/archived/`:
-
-- `theraprac-api/docs/phase1-execution-checklist.md`
-- `theraprac-api/docs/phase2-execution-checklist.md`
-- `theraprac-api/docs/phase3-*.md`
-- `theraprac-api/docs/phase3.5-*.md`
-- `theraprac-api/docs/phase4.0-*.md`
-- `theraprac-api/docs/phase4.1-*.md`
-
-### 3. Pre-Commit Hook Optimization
-
-**Finding:** The API pre-commit hook runs the full test suite (including integration tests), which may cause friction and `--no-verify` usage.
-
-**Recommendation (not implemented):**
-
-| Check | Pre-Commit | CI |
-|-------|------------|-----|
-| Lint | ✅ | ✅ |
-| Type/Build check | ✅ | ✅ |
-| Unit tests | ✅ | ✅ |
-| Integration tests | ❌ | ✅ |
-| Full test suite | ❌ | ✅ |
-
-The web project already follows this pattern (see `docs/PRE_COMMIT_HOOKS.md`).
-
-### 4. Missing .cursorrules
-
-**Finding:** `theraprac-infra` has no `.cursorrules` file.
-
-**Recommendation:** Not required for simpler infrastructure project, but could add minimal one if AI assistance is frequently used.
+| Document | Reason |
+|----------|--------|
+| `docs/archive/*` | Implementation summaries |
+| `docs/migration/*` | Completed migration planning |
 
 ---
 
-## Authority Conflict Resolution
+## Authority Collisions Resolved
 
-When documents conflict, resolution order:
+### theraprac-api: Backend Standards
 
-### API
-1. `api/openapi/api.yaml` wins for API behavior
-2. `docs/BACKEND_STANDARDS.md` wins for handler patterns
-3. `docs/BUILD_STANDARDS.md` wins for versioning
+**Collision:** Three documents covered backend coding patterns:
+- `BACKEND_STANDARDS.md`
+- `BACKEND_ARCHITECTURE_GUIDE.md`
+- `guides/backend-standards.md`
 
-### Web
-1. `docs/FRONTEND_ARCHITECTURE_GUIDE.md` wins for component patterns
-2. `docs/reference/design-system.md` wins for visual design
-3. `docs/reference/rbac/api-reference.md` wins for permissions
+**Resolution:** `BACKEND_STANDARDS.md` is authoritative. Others are deprecated and should be deleted.
 
-### Infra
-1. `docs/DEPLOYMENT_WORKFLOW.md` wins for deployment
-2. Script `--help` output takes precedence over stale docs
+### theraprac-api: Backend Guardrails
 
----
+**Collision:** `architecture/backend-guardrails.md` overlaps with `BACKEND_STANDARDS.md` and `.cursorrules`.
 
-## Verification
-
-To verify this audit:
-
-1. **Authority indexes exist:**
-   ```bash
-   ls theraprac-api/docs/_index.md
-   ls theraprac-web/docs/_index.md
-   ls theraprac-infra/docs/_index.md
-   ```
-
-2. **Cursorrules are minimal:**
-   - Should NOT contain handler code templates
-   - Should NOT contain error handling examples
-   - Should ONLY contain authority references and prohibitions
-
-3. **Duplicates are marked:**
-   - `theraprac-api/docs/_index.md` lists deprecated documents
+**Resolution:** Content is covered elsewhere. Document is deprecated.
 
 ---
 
-## Maintenance
+## Missing Documents Added to Indexes
 
-### When Adding Documentation
+### theraprac-web
 
-1. Check `docs/_index.md` for existing authority
-2. Add new canonical docs to the index
-3. Do NOT create documents that duplicate existing canonical content
+Documents that existed but were not listed in `_index.md`:
+- `SECURITY.md` — added as AUTHORITATIVE
+- `TEST_COVERAGE_STRATEGY.md` — added as AUTHORITATIVE
+- `reference/auth-architecture.md` — added as AUTHORITATIVE
 
-### When Documents Conflict
+### theraprac-api
 
-1. Consult `docs/_index.md` for authority hierarchy
-2. The higher-authority document wins
-3. Update or delete the lower-authority document
+Documents that existed but were not listed in `_index.md`:
+- `BACKEND_COMPLIANCE_PLAN.md` — added as SUPPORTING
+- `BUILD_DEPLOY_OPTIMIZATION.md` — added as SUPPORTING
+- `architecture/backend-guardrails.md` — added as DEPRECATED
 
 ---
 
-**Report Complete**
+## DONE Markers Applied
+
+### theraprac-api: Intake Subsystem
+
+**Status:** Design documentation complete. Implementation in progress.
+
+The Intake subsystem has comprehensive design documentation across 10 documents covering:
+- Database schema and data model
+- State machine and transitions
+- Versioning strategy
+- Assignment workflows
+- Client and staff UX specifications
+- File storage and audit logging
+
+This documentation is marked as design-complete in `docs/_index.md`.
+
+---
+
+## No-Verify Enforcement
+
+Documented in:
+- `theraprac-workspace/.cursor/WORKSPACE.md` — workspace-level directive
+- `theraprac-api/.cursorrules` — Commit Discipline section
+- `theraprac-web/.cursorrules` — Commit Discipline section
+- `theraprac-infra/.cursorrules` — Commit Discipline section
+
+All documents state:
+- Pre-commit hooks are mandatory
+- `--no-verify` is not acceptable
+- Hook failures must be fixed, not bypassed
+
+---
+
+## Remaining Ambiguity
+
+### Files Marked for Deletion
+
+The following files are deprecated and should be deleted:
+- `theraprac-api/docs/BACKEND_ARCHITECTURE_GUIDE.md`
+- `theraprac-api/docs/guides/backend-standards.md`
+- `theraprac-api/docs/architecture/backend-guardrails.md`
+
+**Action:** These deletions are documented but not executed by this audit.
+
+### Phase Documents
+
+12 phase execution documents in `theraprac-api/docs/` are marked HISTORICAL but remain in the main `docs/` directory rather than `docs/archived/`.
+
+**Action:** Consider moving to `archived/` for clarity.
+
+---
+
+## Audit Complete
+
+The documentation spine is now established:
+- Each project has a `docs/_index.md` with explicit authority classifications
+- `WORKSPACE.md` provides workspace-level navigation
+- Authority collisions are resolved and documented
+- No-verify enforcement is documented at all levels
+
+---
+
+**Auditor:** AI Assistant  
+**Date:** 2024-12-24
 
