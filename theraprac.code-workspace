@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "path": "../theraprac-api"
+    },
+    {
+      "path": "../theraprac-web"
+    },
+    {
+      "path": "../theraprac-infra"
+    },
+    {
+      "path": "../ziti-source"
+    },
+    {
+      "path": "../otel-trace"
+    },
+    {
+      "path": "../scripts"
+    },
+    {
+      "path": ".cursor"
+    }
+  ]
+}
+

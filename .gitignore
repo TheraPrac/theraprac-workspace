@@ -1,0 +1,15 @@
+# Runtime state - do not commit
+projects/
+plans/
+ide_state.json
+ai-tracking/
+browser-logs/
+*.log
+
+# Extension caches
+extensions/
+
+# Local config
+argv.json
+cli-config.json
+
